@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examination Timetpython -m venv .venv
+able Generator</title>
+</head>
+<body>
+    <h1>Examination Timetable Generator</h1>
+    
+    <form id="timetable-form">
+        <label>Subjects (comma-separated):</label><br>
+        <input type="text" id="subjects" required><br><br>
+
+        <label>Number of Students per Subject (comma-separated):</label><br>
+        <input type="text" id="students-per-subject" required><br><br>
+
+        <label>Available Exam Dates (comma-separated):</label><br>
+        <input type="text" id="dates" required><br><br>
+
+        <label>Available Time Slots (comma-separated):</label><br>
+        <input type="text" id="time-slots" required><br><br>
+
+        <label>Room Capacities (comma-separated):</label><br>
+        <input type="text" id="rooms" required><br><br>
+
+        <label>Invigilators (comma-separated):</label><br>
+        <input type="text" id="invigilators" required><br><br>
+
+        <button type="submit">Generate Timetable</button>
+    </form>
+
+    <h2>Generated Timetable:</h2>
+    <pre id="result"></pre>
+
+    <script>
+        document.getElementById('timetable-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const subjects = document.getElementById('subjects').value.split(',');
+            const studentsPerSubject = document.getElementById('students-per-subject').value.split(',').map(Number);
+            const dates = document.getElementById('dates').value.split(',');
+            const timeSlots = document.getElementById('time-slots').value.split(',');
+            const rooms = document.getElementById('rooms').value.split(',');
+            const invigilators = document.getElementById('invigilators').value.split(',');
+
+            fetch('/generate_timetable', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    subjects,
+                    students_per_subject: studentsPerSubject,
+                    dates,
+                    time_slots: timeSlots,
+                    rooms,
+                    invigilators
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultElement = document.getElementById('result');
+                resultElement.textContent = JSON.stringify(data.timetable, null, 2);
+            });
+        });
+    </script>
+</body>
+</html>
